@@ -12,6 +12,7 @@ export default function Contact() {
     subject: "",
     message: "",
     country: "",
+    website: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,6 +54,7 @@ export default function Contact() {
         subject: "",
         message: "",
         country: "",
+        website: "",
       });
     } catch (error) {
       console.error("Failed to send message:", error);

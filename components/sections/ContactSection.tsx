@@ -37,6 +37,7 @@ interface ContactSectionProps {
     subject: string;
     message: string;
     country?: string;
+    website?: string;
   };
   formFields: {
     name: FormField;
@@ -176,6 +177,29 @@ export function ContactSection({
               onSubmit={onSubmit}
               className="space-y-5 *:opacity-0"
             >
+              {/* Anti-spam honeypot - hidden from real users */}
+              <div
+                aria-hidden="true"
+                style={{
+                  position: "absolute",
+                  left: "-9999px",
+                  width: "1px",
+                  height: "1px",
+                  overflow: "hidden",
+                }}
+              >
+                <label htmlFor="website">Website</label>
+
+                <input
+                  type="text"
+                  id="website"
+                  name="website"
+                  value={formData.website || ""}
+                  onChange={onChange}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
               {/* Name and Email Row */}
               <div className="grid md:grid-cols-2 gap-5">
                 {/*--====-- Your Name --====--*/}

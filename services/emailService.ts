@@ -4,6 +4,7 @@ interface ContactFormData {
   subject: string;
   message: string;
   country?: string;
+  website?: string;
 }
 
 export const emailService = {
