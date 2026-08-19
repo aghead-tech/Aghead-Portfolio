@@ -1,0 +1,294 @@
+@custom-variant dark (&:is(.dark *));
+
+/*--====-- Root Theme Variables --====--*/
+:root {
+  --font-size: 16px;
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --primary: #030213;
+  --primary-foreground: #ffffff;
+  --secondary: #f6f6f6;
+  --secondary-foreground: #030213;
+  --muted: #f6f6f6;
+  --muted-foreground: #747474;
+  --accent: #f6f6f6;
+  --accent-foreground: #030213;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: transparent;
+  --input-background: #f6f6f6;
+  --switch-background: #cbced4;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: #747474;
+  --radius: 0.75rem;
+  --acDark: #000000;
+  --acGraylight: #747474;
+  --aclight2: #e4e4e4;
+  --acGraylight2: #f6f6f6;
+  --acDarkGray: #ededed;
+  --acOp01: rgba(245, 245, 245, 0.47);
+  --acWD: #ffffff;
+}
+
+/*--====-- Dark Mode Theme --====--*/
+.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #111111;
+  --card-foreground: #ffffff;
+  --popover: #111111;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #ffffff;
+  --muted: #1a1a1a;
+  --muted-foreground: #a0a0a0;
+  --accent: #1a1a1a;
+  --accent-foreground: #ffffff;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: #1a1a1a;
+  --ring: #747474;
+  --acDark: #000000;
+  --acGraylight: #f6f6f6;
+  --aclight2: #e4e4e4;
+  --acGraylight2: #1c1c1c;
+  --acDarkGray: #242424;
+  --acOp01: rgba(28, 28, 28, 0.94);
+  --acWD: #292929;
+}
+
+/*--====-- Luxurious Theme (Gold/Yellow) --====--*/
+:root[data-theme="luxurious"] {
+  --theme-start: #ec9a48;
+  --theme-mid: #eab953;
+  --theme-end: #edae4d;
+  --theme-gradient: linear-gradient(
+    116deg,
+    #ec9a48 12.58%,
+    #eab953 68.09%,
+    #edae4d 123.6%
+  );
+  --theme-gradient-2: linear-gradient(
+    270deg,
+    #d29c44 0%,
+    #e5cfa5 36.12%,
+    #d4a45e 72.28%,
+    #b36f28 100%
+  );
+}
+
+/*--====-- Blue Theme --====--*/
+:root[data-theme="blue"] {
+  --theme-start: #00d4ff;
+  --theme-mid: #4fdcff;
+  --theme-end: #1e5eff;
+  --theme-gradient: linear-gradient(90deg, #06c8f9 0%, #0d43e3 100%);
+  --theme-gradient-2: linear-gradient(
+    270deg,
+    #0a3cff 0%,
+    #4fdcff 36.12%,
+    #1e5eff 72.28%,
+    #0d43e3 100%
+  );
+}
+
+/*--====-- Red Theme --====--*/
+:root[data-theme="red"] {
+  --theme-start: #ed213a;
+  --theme-mid: #ff6b8a;
+  --theme-end: #ce1126;
+  --theme-gradient: linear-gradient(to right, #ed213a, #ce1126);
+  --theme-gradient-2: linear-gradient(
+    270deg,
+    #ed213a 0%,
+    #ff6b8a 36.12%,
+    #ed213a 72.28%,
+    #ce1126 100%
+  );
+}
+
+/*--====-- Tailwind Theme Integration --====--*/
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-acDark: var(--acDark);
+  --color-acGraylight: var(--acGraylight);
+  --color-aclight2: var(--aclight2);
+  --color-acGraylight2: var(--acGraylight2);
+  --color-acDarkGray: var(--acDarkGray);
+  --color-acOp01: var(--acOp01);
+  --color-acWD: var(--acWD);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Theme Color Utilities */
+  --color-theme-start: var(--theme-start);
+  --color-theme-mid: var(--theme-mid);
+  --color-theme-end: var(--theme-end);
+
+  /* Fonts */
+  --font-sans: "Outfit", sans-serif;
+}
+
+/*--====-- Base Styles --====--*/
+@layer base {
+  * {
+    border-color: var(--border);
+    outline-color: var(--ring);
+    outline-width: 2px;
+    outline-offset: 2px;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: "Outfit", sans-serif;
+  }
+
+  /**
+  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
+  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
+  */
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h4 {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  label {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  button {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  input {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+  }
+}
+
+/*--====-- Odometer Styles --====--*/
+.odometer-wrapper .odometer {
+  display: inline-block;
+}
+
+.odometer .odometer-digit {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+}
+
+.odometer .odometer-digit .odometer-digit-spacer {
+  display: inline-block;
+  vertical-align: middle;
+  visibility: hidden;
+}
+
+.odometer .odometer-digit .odometer-digit-inner {
+  text-align: left;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.odometer .odometer-digit .odometer-ribbon {
+  display: block;
+}
+
+.odometer .odometer-digit .odometer-ribbon-inner {
+  display: block;
+  -webkit-backface-visibility: hidden;
+}
+
+.odometer .odometer-digit .odometer-value {
+  display: block;
+  -webkit-transform: translateZ(0);
+}
+
+.odometer.odometer-animating .odometer-digit .odometer-ribbon-inner {
+  -webkit-transition: -webkit-transform 2s;
+  -moz-transition: -moz-transform 2s;
+  -ms-transition: -ms-transform 2s;
+  -o-transition: -o-transform 2s;
+  transition: transform 2s;
+}
+
+.odometer.odometer-animating.odometer-animating-up .odometer-ribbon-inner {
+  -webkit-transform: translateY(-100%);
+  -moz-transform: translateY(-100%);
+  -ms-transform: translateY(-100%);
+  -o-transform: translateY(-100%);
+  transform: translateY(-100%);
+}
+
+.odometer.odometer-animating.odometer-animating-down .odometer-ribbon-inner {
+  -webkit-transform: translateY(0);
+  -moz-transform: translateY(0);
+  -ms-transform: translateY(0);
+  -o-transform: translateY(0);
+  transform: translateY(0);
+}

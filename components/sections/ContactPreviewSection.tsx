@@ -1,0 +1,344 @@
+/*--====-- Contact Preview Section --====--*/
+"use client";
+import React, { useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+import { SectionHeader2 } from "../ui/SectionHeader2";
+import { SocialLinks } from "../ui/SocialLinks";
+import { SocialLink } from "../../data/layoutData";
+import { CountrySelect } from "../ui/CountrySelect";
+import { Label } from "../ui/Label";
+import { Input } from "../ui/Input";
+import { Textarea } from "../ui/Textarea";
+import { Button } from "../ui/Button";
+import { countries } from "../../data/countries";
+import { contactData } from "../../data/contactData";
+import LocationIcon from "@/public/images/icons/LocationIcon";
+import ProfileCardIcon from "@/public/images/icons/ProfileCardIcon";
+import CurvedArrowIcon from "@/public/images/icons/CurvedArrowIcon";
+import { useGsapStagger } from "../../hooks/useGsapStagger";
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
+
+interface FormField {
+  label: string;
+  placeholder: string;
+}
+
+interface ContactPreviewSectionProps {
+  badgeIcon?: any;
+  badgeText: string;
+  watermarkText: string;
+  mainText: string;
+  highlightText: string;
+  formData: {
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+    country?: string;
+  };
+  formFields: {
+    name: FormField;
+    email: FormField;
+    subject: FormField;
+    country: FormField;
+    message: FormField;
+  };
+  submitText: string;
+  socialHeading: string;
+  socialLinks: SocialLink[];
+  socialDescription: string;
+  uiText?: {
+    cardHeadings: {
+      address: string;
+      contact: string;
+      stayConnected: string;
+    };
+    contactLabels: {
+      phoneLabel: string;
+      emailLabel: string;
+    };
+    addressLines: {
+      line1: string;
+      line2: string;
+    };
+    contactDetails: {
+      phone: string;
+      email: string;
+    };
+  };
+  onSubmit: (e: React.FormEvent) => void;
+  onChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => void;
+}
+
+export function ContactPreviewSection({
+  badgeText,
+  watermarkText,
+  mainText,
+  highlightText,
+  formData,
+  formFields,
+  submitText,
+  socialHeading,
+  socialLinks,
+  uiText = {
+    cardHeadings: contactData.cardHeadings,
+    contactLabels: {
+      phoneLabel: contactData.contact.phoneLabel,
+      emailLabel: contactData.contact.emailLabel,
+    },
+    addressLines: {
+      line1: contactData.address.line1,
+      line2: contactData.address.line2,
+    },
+    contactDetails: {
+      phone: contactData.contact.phone,
+      email: contactData.contact.email,
+    },
+  },
+  onSubmit,
+  onChange,
+}: ContactPreviewSectionProps) {
+  // Ref for blur animation on contact info cards
+  const blurInfoRef = useRef<HTMLDivElement>(null);
+
+  // Stagger animation for form fields
+  const formRef = useGsapStagger<HTMLFormElement>({
+    direction: "up",
+    distance: 30,
+    duration: 0.8,
+    stagger: 0.1,
+    delay: 0.4,
+    useScrollTrigger: true,
+  });
+
+  // Blur-in animation for contact info cards
+  useEffect(() => {
+    if (!blurInfoRef.current) return;
+
+    const items = blurInfoRef.current.children;
+
+    // Set initial state immediately (hidden and blurred)
+    gsap.set(items, {
+      opacity: 0,
+      filter: "blur(10px)",
+    });
+
+    // Create the animation with ScrollTrigger
+    const animation = gsap.to(items, {
+      opacity: 1,
+      filter: "blur(0px)", // end clear
+      duration: 1,
+      stagger: 0.2,
+      delay: 0.5,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: blurInfoRef.current,
+        start: "top 80%",
+        end: "bottom 20%",
+        toggleActions: "play none none reverse",
+      },
+    });
+
+    return () => {
+      // Only kill the specific ScrollTrigger for this animation
+      if (animation.scrollTrigger) {
+        animation.scrollTrigger.kill();
+      }
+      animation.kill();
+    };
+  }, []);
+
+  return (
+    <section className="py-12 md:py-20 bg-background relative">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/*--====-- Section Header Component --====--*/}
+        <SectionHeader2
+          showBadge={true}
+          badgeText={badgeText}
+          showWatermark={true}
+          watermarkText={watermarkText}
+          mainText={mainText}
+          highlightText={highlightText}
+          alignment="center"
+          descriptionClassName="mx-auto"
+          headingClassName="w-auto md:w-[60%] mx-auto"
+        />
+
+        <div className="flex md:flex-row flex-col gap-6 lg:gap-8 max-w-7xl mx-auto">
+          {/*--====-- Contact Form (Left Side - 3 columns out of 5) --====--*/}
+          <div className="space-y-6 w-full lg:w-[70%]">
+            <form ref={formRef} onSubmit={onSubmit} className="space-y-5">
+              {/* Name and Email Row */}
+              <div className="grid md:grid-cols-2 gap-5">
+                {/*--====-- Your Name --====--*/}
+                <div>
+                  <Label htmlFor="name" className="block mb-2 text-foreground">
+                    {formFields.name.label}
+                  </Label>
+                  <Input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={onChange}
+                    placeholder={formFields.name.placeholder}
+                    required
+                  />
+                </div>
+
+                {/*--====-- Email Address --====--*/}
+                <div>
+                  <Label htmlFor="email" className="block mb-2 text-foreground">
+                    {formFields.email.label}
+                  </Label>
+                  <Input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={onChange}
+                    placeholder={formFields.email.placeholder}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Subject and Country Row */}
+              <div className="grid md:grid-cols-2 gap-5 relative z-20">
+                {/*--====-- Subject --====--*/}
+                <div>
+                  <Label
+                    htmlFor="subject"
+                    className="block mb-2 text-foreground"
+                  >
+                    {formFields.subject.label}
+                  </Label>
+                  <Input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={onChange}
+                    placeholder={formFields.subject.placeholder}
+                    required
+                  />
+                </div>
+
+                {/*--====-- Country --====--*/}
+                <div className="relative z-20">
+                  <Label
+                    htmlFor="country"
+                    className="block mb-2 text-foreground"
+                  >
+                    {formFields.country.label}
+                  </Label>
+                  <CountrySelect
+                    value={formData.country || ""}
+                    onChange={(value) => {
+                      // Create a synthetic event for the parent component
+                      const syntheticEvent = {
+                        target: { name: "country", value },
+                      } as React.ChangeEvent<HTMLSelectElement>;
+                      onChange(syntheticEvent);
+                    }}
+                    countries={countries}
+                    placeholder={formFields.country.placeholder}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/*--====-- Message --====--*/}
+              <div className="relative z-0">
+                <Label htmlFor="message" className="block mb-2 text-foreground">
+                  {formFields.message.label}
+                </Label>
+                <Textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={onChange}
+                  rows={6}
+                  resize="none"
+                  placeholder={formFields.message.placeholder}
+                  required
+                />
+              </div>
+
+              {/*--====-- Submit Button --====--*/}
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+                rightIcon={<CurvedArrowIcon className="w-5 h-5 rotate-45" />}
+              >
+                {submitText}
+              </Button>
+            </form>
+          </div>
+
+          {/*--====-- Contact Information Cards (Right Side - 2 columns out of 5) --====--*/}
+          <div ref={blurInfoRef} className="block w-full lg:w-[30%]">
+            <div className="p-6 sm:p-7 bg-acGraylight2 z-10 rounded-t-3xl border-2 border-acDarkGray">
+              {/*--====-- Address Card --====--*/}
+              <div className="mb-10">
+                <div className="flex items-center space-x-2 mb-3">
+                  <LocationIcon useGradient={true} />
+                  <h3 className="font-semibold text-lg md:text-2xl gradient-text">
+                    {uiText.cardHeadings.address}
+                  </h3>
+                </div>
+                <p className="text-base text-muted-foreground ">
+                  {uiText.addressLines.line1}
+                </p>
+                <p className="text-base text-muted-foreground ">
+                  {uiText.addressLines.line2}
+                </p>
+              </div>
+
+              {/*--====-- Contact Card --====--*/}
+              <div className="relative overflow-hidden">
+                <div className="flex items-center space-x-2 mb-3">
+                  <ProfileCardIcon useGradient={true} />
+                  <h3 className="font-semibold text-lg md:text-2xl gradient-text">
+                    {uiText.cardHeadings.contact}
+                  </h3>
+                </div>
+                <p className="text-base text-muted-foreground">
+                  {uiText.contactLabels.phoneLabel}{" "}
+                  {uiText.contactDetails.phone}
+                </p>
+                <p className="text-base text-muted-foreground">
+                  {uiText.contactLabels.emailLabel}{" "}
+                  {uiText.contactDetails.email}
+                </p>
+              </div>
+            </div>
+
+            {/*--====-- Stay Connected Card --====--*/}
+            <div className="p-6 relative overflow-hidden  bg-linear-to-br rounded-b-3xl from-theme-start to-theme-end">
+              <h3 className="relative z-10 font-semibold text-lg md:text-2xl text-acDark mb-5 text-start">
+                {socialHeading}
+              </h3>
+              <SocialLinks
+                links={socialLinks}
+                variant="card"
+                className="justify-start relative z-10"
+                textColor="gradient-text "
+              />
+              <div className="absolute top-0 left-0 w-full h-full bg-[url('/images/wave.svg')]"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

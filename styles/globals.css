@@ -1,0 +1,35 @@
+/*--====-- Global Styles --====--*/
+@import "./fonts.css";
+@import "./tailwind.css";
+@import "./theme.css";
+@import "./utilities.css";
+
+body {
+  font-family: "Outfit", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+span,a,p,
+h6 {
+  font-family: "Outfit", sans-serif;
+  cursor: pointer;
+  
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+span,a,label,input,
+h6 {
+user-select: none;
+  
+}
+::selection {
+  color: var(--acDark);
+  background: var(--color-theme-start);
+}
