@@ -49,51 +49,48 @@ export default async function handler(
     res.setHeader("Allow", ["POST"]);
 
     return res.status(405).json({
-      message: "Method not allowed",
+      message: "Method not allowed.",
     });
   }
 
   try {
-    const ip = getClientIp(req);
-
-    const { success, limit, remaining, reset } =
-      await ratelimit.limit(ip);
-
-    res.setHeader("X-RateLimit-Limit", limit.toString());
-    res.setHeader(
-      "X-RateLimit-Remaining",
-      remaining.toString(),
-    );
-    res.setHeader("X-RateLimit-Reset", reset.toString());
-
-    if (!success) {
-      return res.status(429).json({
-        message:
-          "Too many messages. Please wait a few minutes and try again.",
+    if (!req.body || typeof req.body !== "object") {
+      return res.status(400).json({
+        message: "Invalid request body.",
       });
     }
 
-    const {
-      name,
-      email,
-      subject,
-      country,
-      message,
-      website,
-    } = req.body;
+    const { name, email, subject, country, message, website } = req.body;
 
-    // Honeypot
+    // Honeypot: real users never fill this field.
     if (website) {
       return res.status(200).json({
         success: true,
       });
     }
 
+    // Rate limiting
+    const ip = getClientIp(req);
+
+    const { success, limit, remaining, reset } = await ratelimit.limit(ip);
+
+    res.setHeader("X-RateLimit-Limit", limit.toString());
+    res.setHeader("X-RateLimit-Remaining", remaining.toString());
+    res.setHeader("X-RateLimit-Reset", reset.toString());
+
+    if (!success) {
+      return res.status(429).json({
+        message: "Too many messages. Please wait a few minutes and try again.",
+      });
+    }
+
+    // Type validation
     if (
       typeof name !== "string" ||
       typeof email !== "string" ||
       typeof subject !== "string" ||
-      typeof message !== "string"
+      typeof message !== "string" ||
+      (country !== undefined && typeof country !== "string")
     ) {
       return res.status(400).json({
         message: "Invalid form data.",
@@ -103,30 +100,27 @@ export default async function handler(
     const cleanName = name.trim();
     const cleanEmail = email.trim().toLowerCase();
     const cleanSubject = subject.trim();
-    const cleanCountry =
-      typeof country === "string" ? country.trim() : "";
+    const cleanCountry = typeof country === "string" ? country.trim() : "";
     const cleanMessage = message.trim();
 
-    if (
-      !cleanName ||
-      !cleanEmail ||
-      !cleanSubject ||
-      !cleanMessage
-    ) {
+    // Required fields
+    if (!cleanName || !cleanEmail || !cleanSubject || !cleanMessage) {
       return res.status(400).json({
         message: "Please complete all required fields.",
       });
     }
 
+    // Email validation
     if (!emailRegex.test(cleanEmail)) {
       return res.status(400).json({
         message: "Please enter a valid email address.",
       });
     }
 
-    if (cleanName.length > 100) {
+    // Length validation
+    if (cleanName.length < 2 || cleanName.length > 100) {
       return res.status(400).json({
-        message: "Name is too long.",
+        message: "Please enter a valid name.",
       });
     }
 
@@ -136,26 +130,31 @@ export default async function handler(
       });
     }
 
-    if (cleanSubject.length > 150) {
+    if (cleanSubject.length < 2 || cleanSubject.length > 150) {
       return res.status(400).json({
-        message: "Subject is too long.",
+        message: "Please enter a valid subject.",
       });
     }
 
-    if (cleanMessage.length > 5000) {
+    if (cleanCountry.length > 100) {
       return res.status(400).json({
-        message: "Message is too long.",
+        message: "Country value is too long.",
       });
     }
 
+    if (cleanMessage.length < 5 || cleanMessage.length > 5000) {
+      return res.status(400).json({
+        message: "Message must be between 5 and 5000 characters.",
+      });
+    }
+
+    // Escape user input before inserting it into HTML.
     const safeName = sanitize(cleanName);
     const safeEmail = sanitize(cleanEmail);
     const safeSubject = sanitize(cleanSubject);
     const safeCountry = sanitize(cleanCountry);
-    const safeMessage = sanitize(cleanMessage).replace(
-      /\n/g,
-      "<br />",
-    );
+
+    const safeMessage = sanitize(cleanMessage).replace(/\n/g, "<br />");
 
     const { data, error } = await resend.emails.send({
       from: "Aghead Portfolio <contact@agheadalkoko.com>",
@@ -185,7 +184,8 @@ export default async function handler(
               margin: 8px 0 0;
               color: #d1d5db;
             ">
-              A new message was submitted from agheadalkoko.com
+              A new message was submitted from
+              www.agheadalkoko.com
             </p>
           </div>
 
@@ -194,12 +194,22 @@ export default async function handler(
             border: 1px solid #e5e7eb;
             border-top: 0;
           ">
-            <p><strong>Name:</strong> ${safeName}</p>
-            <p><strong>Email:</strong> ${safeEmail}</p>
-            <p><strong>Country:</strong> ${
-              safeCountry || "Not provided"
-            }</p>
-            <p><strong>Subject:</strong> ${safeSubject}</p>
+            <p>
+              <strong>Name:</strong> ${safeName}
+            </p>
+
+            <p>
+              <strong>Email:</strong> ${safeEmail}
+            </p>
+
+            <p>
+              <strong>Country:</strong>
+              ${safeCountry || "Not provided"}
+            </p>
+
+            <p>
+              <strong>Subject:</strong> ${safeSubject}
+            </p>
 
             <hr style="
               border: 0;
@@ -242,8 +252,7 @@ export default async function handler(
     console.error("Contact API error:", error);
 
     return res.status(500).json({
-      message:
-        "Something went wrong while sending your message.",
+      message: "Something went wrong while sending your message.",
     });
   }
 }
