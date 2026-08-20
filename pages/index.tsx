@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Head from "next/head";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { TechMarqueeSection } from "@/components/sections/TechMarqueeSection";
 import { AboutPreviewSection } from "@/components/sections/AboutPreviewSection";
@@ -62,10 +63,42 @@ export default function Home() {
   const { pageHeader: aboutHeader } = aboutData;
   const { previewSection: contactPreview } = contactData;
   const { expertise: expertiseSection } = homePageData.sections;
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Aghead Alkoko",
+    url: "https://www.agheadalkoko.com/",
+    jobTitle: "Full-Stack Developer",
+    description:
+      "Full-Stack Developer based in Vienna, Austria, building modern web applications, scalable software solutions, and digital products.",
+    sameAs: [
+      "https://www.linkedin.com/in/aghead-alkoko/",
+      "https://github.com/aghead-tech",
+    ],
+    knowsAbout: [
+      "Full-Stack Development",
+      "Web Development",
+      "JavaScript",
+      "TypeScript",
+      "React",
+      "Next.js",
+      "Node.js",
+      "Software Development",
+    ],
+  };
 
   return (
     <>
-      <SEO title="Home" description={heroData.description} />
+      <SEO />
+
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(personSchema),
+          }}
+        />
+      </Head>
 
       {/*--====-- Scroll To Top Logic --====--*/}
       <HeroSection
