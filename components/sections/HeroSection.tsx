@@ -238,7 +238,7 @@ export function HeroSection({
             {/*--====-- Right Content --====--*/}
             <div className="relative z-10 flex items-center top-0 lg:top-[100px] xl:top-[42px] 2xl:top-[5px] justify-center overflow-hidden lg:overflow-visible">
               {/*--====-- Professional Image Container --====--*/}
-              <div className="relative w-full max-w-[280px] mx-auto lg:mx-0">
+              <div className="relative w-full max-w-[280px] sm:max-w-sm md:max-w-md lg:max-w-md mx-auto lg:mx-0">
                 {/*--====-- Profile Image --====--*/}
                 <div
                   ref={profileImageRef}
@@ -251,7 +251,7 @@ export function HeroSection({
                     height={700}
                     priority
                     fetchPriority="high"
-                    sizes="(max-width: 640px) 280px, (max-width: 1024px) 50vw, 600px"
+                    sizes="(max-width: 480px) 240px, (max-width: 1024px) 45vw, 500px"
                     className="w-full h-auto object-cover"
                   />
                 </div>
