@@ -249,7 +249,7 @@ export function Footer({
                   type="submit"
                   variant="primary"
                   rounded="lg"
-                  aria-label={newsletter.buttonLabel}
+                  ariaLabel={newsletter.buttonLabel}
                   className="w-[50px] h-[50px] p-0 flex-none"
                 >
                   <CurvedArrowIcon className="w-5 h-5" />
