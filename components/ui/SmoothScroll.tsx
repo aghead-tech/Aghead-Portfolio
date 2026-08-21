@@ -1,46 +1,73 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Lenis from "lenis";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import type Lenis from "lenis";
 
 export function SmoothScroll() {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    // Initialize Lenis
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-    });
+    let isMounted = true;
+    let cleanup: (() => void) | undefined;
 
-    lenisRef.current = lenis;
+    const initSmoothScroll = async () => {
+      const [{ default: Lenis }, { default: gsap }, { ScrollTrigger }] =
+        await Promise.all([
+          import("lenis"),
+          import("gsap"),
+          import("gsap/dist/ScrollTrigger"),
+        ]);
 
-    // Integrate with GSAP ScrollTrigger
-    gsap.registerPlugin(ScrollTrigger);
+      if (!isMounted) return;
 
-    // Update ScrollTrigger on Lenis scroll
-    lenis.on("scroll", ScrollTrigger.update);
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: "vertical",
+        gestureOrientation: "vertical",
+        smoothWheel: true,
+      });
 
-    // Add Lenis's requestAnimationFrame to GSAP's ticker
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
+      lenisRef.current = lenis;
 
-    // Disable GSAP's lag smoothing to ensure sync with Lenis
-    gsap.ticker.lagSmoothing(0);
+      gsap.registerPlugin(ScrollTrigger);
+
+      lenis.on("scroll", ScrollTrigger.update);
+
+      const tickerCallback = (time: number) => {
+        lenis.raf(time * 1000);
+      };
+
+      gsap.ticker.add(tickerCallback);
+      gsap.ticker.lagSmoothing(0);
+
+      cleanup = () => {
+        gsap.ticker.remove(tickerCallback);
+        lenis.destroy();
+        lenisRef.current = null;
+      };
+    };
+
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(() => {
+        initSmoothScroll();
+      });
+
+      return () => {
+        isMounted = false;
+        window.cancelIdleCallback(idleId);
+        cleanup?.();
+      };
+    }
+
+    const timeoutId = setTimeout(() => {
+      initSmoothScroll();
+    }, 500);
 
     return () => {
-      // Cleanup
-      gsap.ticker.remove((time) => {
-        lenis.raf(time * 1000);
-      });
-      lenis.destroy();
-      lenisRef.current = null;
+      isMounted = false;
+      window.clearTimeout(timeoutId);
+      cleanup?.();
     };
   }, []);
 
