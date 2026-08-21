@@ -126,8 +126,6 @@ export function Button({
     justify-center
     gap-2
     font-semibold
-    transition-colors
-    duration-300
     relative
     overflow-hidden
     ${variantStyles[variant]}

@@ -242,7 +242,7 @@ export function Footer({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={newsletter.placeholder}
-                  className="flex-1 px-4 py-3 bg-acGraylight2 border-2 border-acDarkGray rounded-lg focus:outline-none focus:border-theme-start transition-colors text-base font-medium"
+                  className="flex-1 px-4 py-3 bg-acGraylight2 border-2 border-acDarkGray rounded-lg focus:outline-none focus:border-theme-start text-base font-medium"
                   required
                 />
                 <Button
