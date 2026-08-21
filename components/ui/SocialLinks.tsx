@@ -1,4 +1,5 @@
 /*--====-- Social Links Component --====--*/
+
 import React from "react";
 import { LucideIcon } from "lucide-react";
 
@@ -40,34 +41,63 @@ export function SocialLinks({
 
   /*--====-- Variant Classes --====--*/
   const variantClasses = {
-    gradient: "bg-linear-to-r from-theme-start to-theme-end hover:scale-110 ",
+    gradient:
+      "bg-linear-to-r from-theme-start to-theme-end hover:scale-110",
+
     acbox1:
       "bg-acGraylight2 border border-acDarkGray hover:bg-linear-to-r from-theme-start to-theme-end",
-    card: "bg-acDark ",
+
+    card:
+      "bg-acDark",
+
     transparent:
       "bg-card border border-border hover:bg-linear-to-r hover:from-theme-start hover:to-theme-end",
   };
 
   return (
     <div className={`flex space-x-3 ${className}`}>
-      {links.map((social, index) => (
-        <a
-          key={index}
-          href={social.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`group ${sizeClasses[size]} flex-none cursor-pointer ${roundedAc} ${variantClasses[variant]} transition-all duration-300 flex items-center justify-center`}
-          aria-label={social.label || `Visit ${social.url}`}
-        >
-          <social.icon
-            className={`${iconSizeClasses[size]} ${
-              textColor.includes("gradient-text")
-                ? "text-theme-start dark:text-theme-mid"
-                : textColor
-            } group-hover:text-white dark:group-hover:text-white transition-colors duration-300`}
-          />
-        </a>
-      ))}
+      {links.map((social, index) => {
+        const SocialIcon = social.icon;
+
+        return (
+          <a
+            key={`${social.label}-${index}`}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`
+              group
+              ${sizeClasses[size]}
+              flex-none
+              cursor-pointer
+              ${roundedAc}
+              ${variantClasses[variant]}
+              transition-[transform,background-color,border-color]
+              duration-300
+              flex
+              items-center
+              justify-center
+            `}
+            aria-label={social.label || `Visit ${social.url}`}
+          >
+            <SocialIcon
+              className={`
+                ${iconSizeClasses[size]}
+                ${
+                  textColor.includes("gradient-text")
+                    ? "text-theme-start dark:text-theme-mid"
+                    : textColor
+                }
+                group-hover:text-white
+                dark:group-hover:text-white
+                transition-colors
+                duration-300
+              `}
+              aria-hidden="true"
+            />
+          </a>
+        );
+      })}
     </div>
   );
 }

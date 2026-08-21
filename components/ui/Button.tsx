@@ -1,5 +1,7 @@
 /*--====-- Button Component --====--*/
+
 "use client";
+
 import React from "react";
 import Link from "next/link";
 import { LucideIcon } from "lucide-react";
@@ -29,8 +31,9 @@ interface ButtonProps {
 
   /*--====-- Event & Custom Props --====--*/
   onClick?: (
-    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>,
   ) => void;
+
   className?: string;
   ariaLabel?: string;
 }
@@ -53,17 +56,20 @@ export function Button({
   className = "",
   ariaLabel,
 }: ButtonProps) {
-  /*--====-- Helper function to render icons --====--*/
+  /*--====-- Helper Function to Render Icons --====--*/
   const renderIcon = (
     icon: LucideIcon | React.ReactNode,
-    iconClassName: string
+    iconClassName: string,
   ) => {
     if (React.isValidElement(icon)) {
       return icon;
     }
+
     const IconComponent = icon as LucideIcon;
+
     return <IconComponent className={iconClassName} />;
   };
+
   /*--====-- GSAP Effects Hook --====--*/
   const {
     buttonRef,
@@ -77,11 +83,16 @@ export function Button({
 
   /*--====-- Variant Styles --====--*/
   const variantStyles = {
-    primary: "bg-linear-to-r from-theme-start to-theme-end text-acDark",
-    secondary: "bg-background border-2 border-border",
-    outline: "border-2 border-theme-start text-theme-start",
-    ghost: "bg-transparent",
-    text: "text-foreground",
+    primary:
+      "bg-linear-to-r from-theme-start to-theme-end text-acDark",
+    secondary:
+      "bg-background border-2 border-border",
+    outline:
+      "border-2 border-theme-start text-theme-start",
+    ghost:
+      "bg-transparent",
+    text:
+      "text-foreground",
   };
 
   /*--====-- Size Styles --====--*/
@@ -110,14 +121,24 @@ export function Button({
 
   /*--====-- Combined Classes --====--*/
   const baseClasses = `
-    inline-flex items-center justify-center gap-2 
-    font-semibold transition-all duration-300
-    relative overflow-hidden
+    inline-flex
+    items-center
+    justify-center
+    gap-2
+    font-semibold
+    transition-colors
+    duration-300
+    relative
+    overflow-hidden
     ${variantStyles[variant]}
     ${sizeStyles[size]}
     ${roundedStyles[rounded]}
     ${fullWidth ? "w-full" : ""}
-    ${disabled || loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+    ${
+      disabled || loading
+        ? "opacity-50 cursor-not-allowed"
+        : "cursor-pointer"
+    }
     ${className}
   `
     .trim()
@@ -133,7 +154,7 @@ export function Button({
   };
 
   const handleClick = (
-    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>,
   ) => {
     hookHandleClick(e, disabled, loading, onClick);
   };
@@ -170,6 +191,7 @@ export function Button({
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <circle
               className="opacity-25"
@@ -179,6 +201,7 @@ export function Button({
               stroke="currentColor"
               strokeWidth="4"
             />
+
             <path
               className="opacity-75"
               fill="currentColor"
@@ -186,14 +209,21 @@ export function Button({
             />
           </svg>
         )}
-        {!loading && LeftIcon && renderIcon(LeftIcon, iconSizes[size])}
+
+        {!loading &&
+          LeftIcon &&
+          renderIcon(LeftIcon, iconSizes[size])}
+
         <span>{children}</span>
-        {!loading && RightIcon && renderIcon(RightIcon, iconSizes[size])}
+
+        {!loading &&
+          RightIcon &&
+          renderIcon(RightIcon, iconSizes[size])}
       </span>
     </>
   );
 
-  /*--====-- Render as Link (Next.js) --====--*/
+  /*--====-- Render as Next.js Link --====--*/
   if (asLink && to) {
     return (
       <Link
@@ -210,7 +240,7 @@ export function Button({
     );
   }
 
-  /*--====-- Render as Anchor (External Link) --====--*/
+  /*--====-- Render as External Anchor --====--*/
   if (asLink && href) {
     return (
       <a
@@ -240,6 +270,7 @@ export function Button({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       aria-label={ariaLabel}
+      aria-busy={loading || undefined}
     >
       {buttonContent}
     </button>
