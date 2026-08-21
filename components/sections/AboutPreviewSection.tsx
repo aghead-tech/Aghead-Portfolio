@@ -80,9 +80,10 @@ export function AboutPreviewSection({
               >
                 <Image
                   src={image}
-                  alt="Profile"
+                  alt="Aghead - Full-Stack Developer"
                   width={600}
                   height={700}
+                  sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 500px"
                   className="w-full h-auto object-cover"
                 />
               </div>
