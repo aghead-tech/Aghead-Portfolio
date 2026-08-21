@@ -409,18 +409,7 @@ export function HeroSection({
       </div>
 
       {/*--====-- Grid Background --====--*/}
-      <div
-        className="
-    absolute
-    inset-0
-    top-[-100px]
-    pointer-events-none
-    bg-grid-pattern
-    opacity-50
-    dark:opacity-60
-  "
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0 top-[-100px] pointer-events-none bg-[url('/images/WhiteGrid.svg')] dark:bg-[url('/images/DarkGrid.svg')] bg-no-repeat bg-cover opacity-50 dark:opacity-60" />
     </section>
   );
 }
