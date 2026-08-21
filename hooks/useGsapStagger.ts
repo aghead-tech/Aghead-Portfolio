@@ -1,22 +1,61 @@
 //--====-- GSAP Stagger Hook --====--//
-
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePreload } from "./usePreloadContext";
 
+gsap.registerPlugin(ScrollTrigger);
+
 interface UseStaggerOptions {
+  /**
+   * Direction of stagger animation: 'up', 'down', 'left', 'right', or 'none'
+   * @default 'left'
+   */
   direction?: "up" | "down" | "left" | "right" | "none";
+  /**
+   * Distance to travel during animation (in pixels)
+   * @default 20
+   */
   distance?: number;
+  /**
+   * Animation duration in seconds
+   * @default 0.6
+   */
   duration?: number;
+  /**
+   * Stagger delay between each child element in seconds
+   * @default 0.1
+   */
   stagger?: number;
+  /**
+   * GSAP easing function
+   * @default 'power2.out'
+   */
   ease?: string;
+  /**
+   * Enable scroll trigger
+   * @default false
+   */
   useScrollTrigger?: boolean;
+  /**
+   * ScrollTrigger start position
+   * @default 'top 80%'
+   */
   scrollStart?: string;
+  /**
+   * Initial delay before animation starts (in seconds)
+   * @default 0
+   */
   delay?: number;
 }
 
-export function useGsapStagger<T extends HTMLElement = HTMLElement>(
-  options: UseStaggerOptions = {},
+/**
+ * Custom hook for GSAP staggered animations on child elements
+ * Animates all children of the referenced element with a stagger effect
+ * @returns ref to attach to the parent element containing children to animate
+ */
+export function useGsapStagger<T extends HTMLElement>(
+  options: UseStaggerOptions = {}
 ) {
   const {
     direction = "left",
@@ -29,25 +68,17 @@ export function useGsapStagger<T extends HTMLElement = HTMLElement>(
     delay = 0,
   } = options;
 
-  const containerRef = useRef<T | null>(null);
+  const containerRef = useRef<T>(null);
   const { isPreloaded } = usePreload();
 
   useEffect(() => {
-    if (!containerRef.current || !isPreloaded) return;
+    if (!containerRef.current || !containerRef.current.children.length || !isPreloaded) return;
 
-    const container = containerRef.current;
-    const children = Array.from(container.children);
+    // Small delay to ensure all refs are mounted
+    const timeoutId = setTimeout(() => {
+      if (!containerRef.current || !containerRef.current.children.length) return;
 
-    if (children.length === 0) return;
-
-    let animation: gsap.core.Tween | null = null;
-    let isMounted = true;
-
-    const runAnimation = async () => {
-      const fromVars: gsap.TweenVars = {
-        opacity: 0,
-      };
-
+      const fromVars: gsap.TweenVars = { opacity: 0 };
       const toVars: gsap.TweenVars = {
         opacity: 1,
         duration,
@@ -56,76 +87,50 @@ export function useGsapStagger<T extends HTMLElement = HTMLElement>(
         delay,
       };
 
+      // Add directional movement
       switch (direction) {
         case "up":
           fromVars.y = distance;
           toVars.y = 0;
           break;
-
         case "down":
           fromVars.y = -distance;
           toVars.y = 0;
           break;
-
         case "left":
           fromVars.x = -distance;
           toVars.x = 0;
           break;
-
         case "right":
           fromVars.x = distance;
           toVars.x = 0;
           break;
-
         case "none":
+          // No directional movement, only opacity
           break;
       }
 
+      // Add ScrollTrigger if enabled
       if (useScrollTrigger) {
-        const { ScrollTrigger } = await import(
-          "gsap/ScrollTrigger"
-        );
-
-        if (!isMounted) return;
-
-        gsap.registerPlugin(ScrollTrigger);
-
         toVars.scrollTrigger = {
-          trigger: container,
+          trigger: containerRef.current,
           start: scrollStart,
           toggleActions: "play none none none",
         };
       }
 
-      if (!isMounted) return;
-
-      animation = gsap.fromTo(
-        children,
-        fromVars,
-        toVars,
-      );
-    };
-
-    runAnimation();
+      // Explicitly set initial state before animation
+      gsap.set(containerRef.current!.children, fromVars);
+      gsap.to(containerRef.current!.children, toVars);
+    }, 100);
 
     return () => {
-      isMounted = false;
-
-      animation?.kill();
-
-      gsap.killTweensOf(children);
+      clearTimeout(timeoutId);
+      if (containerRef.current) {
+        gsap.killTweensOf(containerRef.current.children);
+      }
     };
-  }, [
-    direction,
-    distance,
-    duration,
-    stagger,
-    ease,
-    useScrollTrigger,
-    scrollStart,
-    delay,
-    isPreloaded,
-  ]);
+  }, [direction, distance, duration, stagger, ease, useScrollTrigger, scrollStart, delay, isPreloaded]);
 
   return containerRef;
 }

@@ -1,63 +1,59 @@
 //--====-- GSAP Fade In Hook --====--//
-
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePreload } from "./usePreloadContext";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface UseFadeInOptions {
   /**
-   * Direction of fade in
-   * @default "up"
+   * Direction of fade in: 'up', 'down', 'left', 'right', or 'none'
+   * @default 'up'
    */
   direction?: "up" | "down" | "left" | "right" | "none";
-
   /**
-   * Distance to travel during animation
+   * Distance to travel during animation (in pixels)
    * @default 20
    */
   distance?: number;
-
   /**
    * Animation duration in seconds
    * @default 0.8
    */
   duration?: number;
-
   /**
    * Delay before animation starts in seconds
    * @default 0
    */
   delay?: number;
-
   /**
    * GSAP easing function
-   * @default "power2.out"
+   * @default 'power2.out'
    */
   ease?: string;
-
   /**
-   * Enable ScrollTrigger
+   * Enable scroll trigger
    * @default false
    */
   useScrollTrigger?: boolean;
-
   /**
    * ScrollTrigger start position
-   * @default "top 80%"
+   * @default 'top 80%'
    */
   scrollStart?: string;
-
   /**
-   * Custom trigger element ref
+   * Custom trigger element ref (if different from animated element)
    */
-  triggerRef?: React.RefObject<HTMLElement | null>;
+  triggerRef?: React.RefObject<HTMLElement>;
 }
 
 /**
- * Custom hook for GSAP fade-in animations.
+ * Custom hook for GSAP fade-in animations with optional scroll trigger
+ * @returns ref to attach to the element you want to animate
  */
-export function useGsapFadeIn<T extends HTMLElement = HTMLElement>(
-  options: UseFadeInOptions = {},
+export function useGsapFadeIn<T extends HTMLElement>(
+  options: UseFadeInOptions = {}
 ) {
   const {
     direction = "up",
@@ -70,102 +66,66 @@ export function useGsapFadeIn<T extends HTMLElement = HTMLElement>(
     triggerRef,
   } = options;
 
-  const elementRef = useRef<T | null>(null);
+  const elementRef = useRef<T>(null);
   const { isPreloaded } = usePreload();
 
   useEffect(() => {
     if (!elementRef.current || !isPreloaded) return;
 
-    const element = elementRef.current;
+    // Small delay to ensure all refs are mounted
+    const timeoutId = setTimeout(() => {
+      if (!elementRef.current) return;
 
-    let animation: gsap.core.Tween | null = null;
-    let isMounted = true;
+      const fromVars: gsap.TweenVars = { opacity: 0 };
+      const toVars: gsap.TweenVars = { opacity: 1, duration, delay, ease };
 
-    const runAnimation = async () => {
-      const fromVars: gsap.TweenVars = {
-        opacity: 0,
-      };
-
-      const toVars: gsap.TweenVars = {
-        opacity: 1,
-        duration,
-        delay,
-        ease,
-      };
-
+      // Add directional movement
       switch (direction) {
         case "up":
           fromVars.y = distance;
           toVars.y = 0;
           break;
-
         case "down":
           fromVars.y = -distance;
           toVars.y = 0;
           break;
-
         case "left":
           fromVars.x = distance;
           toVars.x = 0;
           break;
-
         case "right":
           fromVars.x = -distance;
           toVars.x = 0;
           break;
-
         case "none":
+          // No directional movement, only opacity
           break;
       }
 
+      // Add ScrollTrigger if enabled
       if (useScrollTrigger) {
-        const { ScrollTrigger } = await import(
-          "gsap/ScrollTrigger"
-        );
-
-        if (!isMounted) return;
-
-        gsap.registerPlugin(ScrollTrigger);
-
-        const trigger =
-          triggerRef?.current || element;
-
-        toVars.scrollTrigger = {
-          trigger,
-          start: scrollStart,
-          toggleActions: "play none none none",
-        };
+        const trigger = triggerRef?.current || elementRef.current;
+        if (trigger) {
+          toVars.scrollTrigger = {
+            trigger,
+            start: scrollStart,
+            toggleActions: "play none none none",
+          };
+        }
       }
 
-      if (!isMounted) return;
-
-      animation = gsap.fromTo(
-        element,
-        fromVars,
-        toVars,
-      );
-    };
-
-    runAnimation();
+      // Explicitly set initial state before animation
+      gsap.set(elementRef.current, fromVars);
+      gsap.to(elementRef.current, toVars);
+    }, 100);
 
     return () => {
-      isMounted = false;
-
-      animation?.kill();
-
-      gsap.killTweensOf(element);
+      clearTimeout(timeoutId);
+      if (elementRef.current) {
+        gsap.killTweensOf(elementRef.current);
+      }
     };
-  }, [
-    direction,
-    distance,
-    duration,
-    delay,
-    ease,
-    useScrollTrigger,
-    scrollStart,
-    triggerRef,
-    isPreloaded,
-  ]);
+  }, [direction, distance, duration, delay, ease, useScrollTrigger, scrollStart, triggerRef, isPreloaded]);
 
   return elementRef;
 }

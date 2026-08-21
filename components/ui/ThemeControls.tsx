@@ -1,6 +1,5 @@
 /*--====-- Theme Controls Component --====--*/
 "use client";
-
 import React, { useState } from "react";
 import { Sun, Moon, Palette } from "lucide-react";
 import { useTheme } from "./ThemeContext";
@@ -17,11 +16,11 @@ export function ThemeControls({
   const { mode, color, toggleMode, setThemeColor } = useTheme();
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="fixed right-0 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-2 bg-card/90 backdrop-blur-lg border border-border rounded-lg p-2 shadow-lg">
       {/* Theme Mode Toggle */}
       <button
         onClick={toggleMode}
-        className="p-2 rounded-lg hover:bg-accent"
+        className="p-2 rounded-lg hover:bg-accent transition-colors"
         aria-label="Toggle theme mode"
         title={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
       >
@@ -36,7 +35,7 @@ export function ThemeControls({
       <div className="relative">
         <button
           onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
-          className="p-2 rounded-lg hover:bg-accent"
+          className="p-2 rounded-lg hover:bg-accent transition-colors"
           aria-label="Change theme color"
           title="Change theme color"
         >
@@ -60,7 +59,7 @@ export function ThemeControls({
                     setThemeColor(theme.value);
                     setIsThemeMenuOpen(false);
                   }}
-                  className={`w-full px-4 py-2 text-left hover:bg-accent ${
+                  className={`w-full px-4 py-2 text-left hover:bg-accent transition-colors ${
                     color === theme.value ? "bg-accent font-semibold" : ""
                   }`}
                 >

@@ -27,6 +27,8 @@ export function ProjectCard({
         border-2
         border-acDarkGray
         hover:border-theme-start
+        transition-colors
+        duration-300
         group
         min-h-[220px]
         flex
@@ -37,11 +39,11 @@ export function ProjectCard({
     >
       {/*--====-- Project Title --====--*/}
       <div>
-        <span className="text-sm font-medium uppercase tracking-wider text-acGray">
+        <p className="text-sm uppercase tracking-wide text-muted-foreground">
           Featured Project
-        </span>
+        </p>
 
-        <h3 className="mt-3 text-2xl xl:text-3xl font-semibold group-hover:gradient-text">
+        <h3 className="mt-3 text-2xl xl:text-3xl font-semibold group-hover:gradient-text transition-colors">
           {title}
         </h3>
       </div>
@@ -61,6 +63,8 @@ export function ProjectCard({
               to-theme-end
               text-black
               hover:text-white
+              transition-colors
+              duration-300
               cursor-default
             "
           >
