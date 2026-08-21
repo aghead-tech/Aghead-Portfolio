@@ -104,13 +104,23 @@ export function HeroSection({
     delay: 1.6,
   });
 
-  const profileImageRef = useGsapFadeIn<HTMLDivElement>({
-    direction: "right",
-    distance: 50,
-    duration: 1.2,
-    delay: 1.9,
-  });
+  const profileImageRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (!profileImageRef.current) return;
+
+    gsap.fromTo(
+      profileImageRef.current,
+      {
+        x: -30,
+      },
+      {
+        x: 0,
+        duration: 0.6,
+        ease: "power2.out",
+      },
+    );
+  }, []);
   /*--====-- Stagger Animation for Badges --====--*/
   const badgesContainerRef = useGsapStagger<HTMLDivElement>({
     direction: "none",
@@ -232,7 +242,7 @@ export function HeroSection({
                 {/*--====-- Profile Image --====--*/}
                 <div
                   ref={profileImageRef}
-                  className="opacity-0 relative z-10 w-full h-auto"
+                  className="relative z-10 w-full h-auto"
                 >
                   <Image
                     src={profileImageSrc}
@@ -257,10 +267,7 @@ export function HeroSection({
 
                       {/* Rotating Text */}
                       <div className="absolute inset-0 animate-spin-slow">
-                        <svg
-                          className="w-full h-full"
-                          viewBox="0 0 130 130"
-                        >
+                        <svg className="w-full h-full" viewBox="0 0 130 130">
                           <defs>
                             <path
                               id="circlePath"
@@ -276,10 +283,7 @@ export function HeroSection({
                             letterSpacing="0.2em"
                             dominantBaseline="hanging"
                           >
-                            <textPath
-                              xlinkHref="#circlePath"
-                              startOffset="4%"
-                            >
+                            <textPath xlinkHref="#circlePath" startOffset="4%">
                               {rotatingBadgeText}
                             </textPath>
                           </text>
@@ -300,10 +304,7 @@ export function HeroSection({
                             letterSpacing="0.2em"
                             dominantBaseline="hanging"
                           >
-                            <textPath
-                              xlinkHref="#circlePath"
-                              startOffset="37%"
-                            >
+                            <textPath xlinkHref="#circlePath" startOffset="37%">
                               {rotatingBadgeText}
                             </textPath>
                           </text>
@@ -324,10 +325,7 @@ export function HeroSection({
                             letterSpacing="0.2em"
                             dominantBaseline="hanging"
                           >
-                            <textPath
-                              xlinkHref="#circlePath"
-                              startOffset="70%"
-                            >
+                            <textPath xlinkHref="#circlePath" startOffset="70%">
                               {rotatingBadgeText}
                             </textPath>
                           </text>
@@ -344,10 +342,7 @@ export function HeroSection({
 
                       {/* Center Arrow */}
                       <div className="absolute -rotate-45 md:w-11 md:h-11 w-8 h-8 rounded-full bg-linear-to-br from-theme-start to-theme-end flex items-center justify-center shadow-lg">
-                        <ArrowRightIcon
-                          width={20}
-                          height={20}
-                        />
+                        <ArrowRightIcon width={20} height={20} />
                       </div>
                     </div>
                   </div>
@@ -365,8 +360,7 @@ export function HeroSection({
                       <span className="font-semibold text-xs sm:text-sm md:text-base whitespace-nowrap">
                         {
                           floatingBadges.find(
-                            (badge) =>
-                              badge.position === "right",
+                            (badge) => badge.position === "right",
                           )?.text
                         }
                       </span>
@@ -386,8 +380,7 @@ export function HeroSection({
                       <span className="font-semibold text-xs sm:text-sm md:text-base whitespace-nowrap">
                         {
                           floatingBadges.find(
-                            (badge) =>
-                              badge.position === "left",
+                            (badge) => badge.position === "left",
                           )?.text
                         }
                       </span>
