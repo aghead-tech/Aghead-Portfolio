@@ -250,6 +250,7 @@ export function HeroSection({
                     width={600}
                     height={700}
                     priority
+                    fetchPriority="high"
                     className="w-full h-auto object-cover"
                   />
                 </div>
