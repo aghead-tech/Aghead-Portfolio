@@ -242,7 +242,7 @@ export function HeroSection({
                 {/*--====-- Profile Image --====--*/}
                 <div
                   ref={profileImageRef}
-                  className="relative z-10 w-full h-auto"
+                  className="relative sm:scale-100 scale-95 bottom-[-11px] sm:bottom-0 z-10 w-full h-auto"
                 >
                   <Image
                     src={profileImageSrc}
