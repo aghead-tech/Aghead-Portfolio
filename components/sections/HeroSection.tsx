@@ -251,7 +251,7 @@ export function HeroSection({
                     height={700}
                     priority
                     fetchPriority="high"
-                    sizes="(max-width: 480px) 240px, (max-width: 1024px) 45vw, 500px"
+                    sizes="(max-width: 640px) 280px, (max-width: 1024px) 45vw, 500px"
                     className="w-full h-auto object-cover"
                   />
                 </div>
